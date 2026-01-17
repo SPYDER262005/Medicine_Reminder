@@ -1,66 +1,63 @@
 # Medicine Reminder App
 
-A Flutter-based Medicine Reminder application designed to help users manage their medication schedules effectively. The app features a clean, modern user interface with a Teal and Orange color scheme and supports local storage and background notifications.
+A Flutter-based Medicine Reminder application developed as an assignment submission. This app allows users to manage their medication schedules with a focus on clean code, proper state management, and a strict **Teal & Orange** design aesthetic.
 
-## Features
+## 📱 Features
 
-- **Add Medicines**: Easily add medicines with details like name, dosage, and type (Pill, Bottle, Syringe, Tablet).
-- **Time Picker**: Select precise times for reminders.
-- **Medicine Types**: Visual selectors for different types of medicines.
-- **Color Coding**: Organized UI with a consistent Teal and Orange theme.
-- **Local Storage**: Uses Hive for efficient and persistent local data storage.
-- **Background Notifications**: Reliable alarm system to remind users even when the app is closed.
-- **Home Screen Grouping**: Medicines are grouped by time of day (Morning, Afternoon, Evening, Night).
-- **Edit & Delete**: Swipe to delete medicines or tap to edit details.
-- **Notes**: Add optional notes for each medicine.
+- **Home Screen**: 
+  - Displays a list of medicines sorted by time (e.g., Morning meds before Evening meds).
+  - Shows placeholder text when the list is empty.
+  - Grouped by time of day (Morning, Afternoon, Evening, Night).
+- **Add Medicine**: 
+  - Simple form with validation (prevents saving empty forms).
+  - Time Picker for precise scheduling.
+  - Medicine Type selection (Pill, Bottle, Syringe, Tablet).
+- **Alarm & Notifications**: 
+  - Triggers background notifications/alarms at the scheduled time.
+  - Works even when the app is closed.
+- **Local Storage**: 
+  - Uses **Hive** for fast, persistent, server-less data storage.
+- **Design**: 
+  - **Primary**: Teal
+  - **Accents**: Orange
+  - Modern, clean UI with edit/delete swipe actions.
 
-## Tech Stack
+## 🛠️ Tech Stack & Architecture
 
 - **Framework**: Flutter
-- **Language**: Dart
-- **State Management**: Provider
-- **Local Storage**: Hive
-- **Notifications**: flutter_local_notifications (or android_alarm_manager_plus)
+- **State Management**: **Provider** (Separating UI from Logic).
+- **Storage**: **Hive** (No backend required).
+- **Notifications**: `flutter_local_notifications`.
+- **Architecture**: distinct separation of concerns:
+  - `lib/screens`: UI Components.
+  - `lib/providers`: Business Logic & State.
+  - `lib/models`: Data Structures.
+  - `lib/core`: Services (Notifications, Time Helpers).
 
-## Getting Started
+## 🚀 Getting Started
 
-### Prerequisites
-
-- Flutter SDK installed
-- Android/iOS Emulator or Physical Device
-
-### Installation
-
-1. Clone the repository:
+1. **Clone the repository**:
    ```bash
    git clone <repository_url>
    ```
-2. Navigate to the project directory:
-   ```bash
-   cd Medicine_Reminder
-   ```
-3. Install dependencies:
+2. **Install dependencies**:
    ```bash
    flutter pub get
    ```
-4. Run the app:
+3. **Run the app**:
    ```bash
    flutter run
    ```
 
-## Folder Structure
+## 📸 Assignment Requirements Checklist
 
-- `lib/core`: Core utilities and services (NotificationService, TimeHelper).
-- `lib/models`: Data models (Medicine).
-- `lib/providers`: State management providers (MedicineProvider).
-- `lib/screens`: UI screens (HomeScreen, AddMedicineScreen).
-- `lib/widgets`: Reusable widgets (MedicineTypeSelector, etc.).
-- `lib/main.dart`: Entry point of the application.
-
-## Screenshots
-
-*(Add screenshots of your app here)*
+- [x] **Home Screen**: List sorted by time with details.
+- [x] **Add Screen**: Form with Time Picker & Validation.
+- [x] **Alarm Logic**: Background notifications implemented.
+- [x] **Local Storage**: Implemented using Hive.
+- [x] **Design**: Strictly Teal (Primary) & Orange (Accent).
+- [x] **Code Quality**: Clean structure, no excessive `setState`.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is for assignment submission purposes.
