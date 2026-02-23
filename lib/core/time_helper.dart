@@ -22,19 +22,19 @@ class TimeHelper {
     return DateFormat('h:mm a').format(time);
   }
   
-  // Get icon for time of day period
-  static String getTimeOfDayIcon(String period) {
+  // Get IconData for time of day period
+  static IconData getTimeOfDayIcon(String period) {
     switch (period) {
       case 'Morning':
-        return '🌅';
+        return Icons.wb_twilight_rounded;
       case 'Afternoon':
-        return '☀️';
+        return Icons.wb_sunny_rounded;
       case 'Evening':
-        return '🌆';
+        return Icons.nights_stay_rounded;
       case 'Night':
-        return '🌙';
+        return Icons.dark_mode_rounded;
       default:
-        return '⏰';
+        return Icons.access_time_rounded;
     }
   }
   
@@ -54,19 +54,34 @@ class TimeHelper {
     }
   }
   
-  // Get medicine type icon
-  static String getMedicineTypeIcon(String type) {
-    switch (type) {
-      case 'Tablet':
-        return '💊';
-      case 'Capsule':
-        return '💊';
-      case 'Syrup':
-        return '🧪';
-      case 'Injection':
-        return '💉';
+  // Get medicine type IconData
+  static IconData getMedicineTypeIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'pill':
+      case 'tablet':
+      case 'capsule':
+        return Icons.medication_rounded;
+      case 'syrup':
+        return Icons.water_drop_rounded;
+      case 'injection':
+        return Icons.vaccines_rounded;
+      case 'cream':
+        return Icons.opacity_rounded;
       default:
-        return '💊';
+        return Icons.medication_rounded;
+    }
+  }
+
+  static String getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good Morning';
+    } else if (hour < 17) {
+      return 'Good Afternoon';
+    } else if (hour < 21) {
+      return 'Good Evening';
+    } else {
+      return 'Good Night';
     }
   }
 }

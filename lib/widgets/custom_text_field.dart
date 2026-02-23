@@ -4,50 +4,60 @@ import '../core/app_colors.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
+  final String? hint;
   final IconData? icon;
   final int maxLines;
   final TextInputType? keyboardType;
+  final bool isPassword;
   final String? Function(String?)? validator;
 
   const CustomTextField({
     Key? key,
     required this.controller,
     required this.label,
+    this.hint,
     this.icon,
     this.maxLines = 1,
     this.keyboardType,
+    this.isPassword = false,
     this.validator,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primaryLight),
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12, bottom: 8),
+          child: Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: AppColors.textPrimary,
+              fontSize: 15,
+              letterSpacing: -0.5,
+            ),
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primaryLight),
+        TextFormField(
+          controller: controller,
+          obscureText: isPassword,
+          maxLines: maxLines,
+          keyboardType: keyboardType,
+          validator: validator,
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: InputDecoration(
+            hintText: hint ?? 'Enter $label',
+            prefixIcon: icon != null ? Icon(icon) : null,
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error),
-        ),
-        filled: true,
-        fillColor: AppColors.surface,
-      ),
+      ],
     );
   }
 }

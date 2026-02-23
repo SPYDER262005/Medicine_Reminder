@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
-import '../core/time_helper.dart';
 
 class MedicineTypeSelector extends StatelessWidget {
   final String selectedType;
@@ -14,77 +13,63 @@ class MedicineTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final types = ['Tablet', 'Capsule', 'Syrup', 'Injection'];
+    final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Medicine Type',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 12),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1,
-          ),
-          itemCount: types.length,
-          itemBuilder: (context, index) {
-            final type = types[index];
-            final isSelected = type == selectedType;
-            
-            return GestureDetector(
-              onTap: () => onTypeSelected(type),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.primaryLight,
-                    width: 2,
-                  ),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : [],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      TimeHelper.getMedicineTypeIcon(type),
-                      style: const TextStyle(fontSize: 28),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      type,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
+    final List<Map<String, dynamic>> types = [
+      {'name': 'Pill', 'icon': Icons.medication_rounded},
+      {'name': 'Syrup', 'icon': Icons.water_drop_rounded},
+      {'name': 'Injection', 'icon': Icons.vaccines_rounded},
+      {'name': 'Cream', 'icon': Icons.format_color_fill_rounded},
+    ];
+
+    return SizedBox(
+      height: 90,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: types.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final type = types[index];
+          final isSelected = type['name'] == selectedType;
+
+          return GestureDetector(
+            onTap: () => onTypeSelected(type['name']),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: 80,
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary : AppColors.surface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.primary.withOpacity(0.05),
+                  width: 1.5,
                 ),
               ),
-            );
-          },
-        ),
-      ],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    type['icon'],
+                    color: isSelected ? Colors.white : AppColors.primary,
+                    size: 30,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    type['name'],
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

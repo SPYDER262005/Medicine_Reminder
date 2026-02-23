@@ -1,224 +1,212 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
+import '../screens/medicine_detail_screen.dart';
 import '../models/medicine_model.dart';
 import '../core/app_colors.dart';
-import '../core/time_helper.dart';
 import '../providers/medicine_provider.dart';
 import '../screens/add_medicine_screen.dart';
 
 class MedicineTile extends StatelessWidget {
   final Medicine medicine;
+  final DateTime? displayTime;
 
-  const MedicineTile({Key? key, required this.medicine}) : super(key: key);
+  const MedicineTile({Key? key, required this.medicine, this.displayTime})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Slidable(
-        endActionPane: ActionPane(
-          motion: const DrawerMotion(),
-          children: [
-            SlidableAction(
-              onPressed: (_) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AddMedicineScreen(medicine: medicine),
-                  ),
-                );
-              },
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              icon: Icons.edit,
-              label: 'Edit',
-              borderRadius: BorderRadius.circular(12),
+    final medicineColor = Color(medicine.colorCode);
+
+    return Slidable(
+      key: ValueKey(medicine.id),
+      endActionPane: ActionPane(
+        motion: const StretchMotion(),
+        extentRatio: 0.5,
+        children: [
+          CustomSlidableAction(
+            onPressed: (_) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AddMedicineScreen(medicine: medicine),
+                ),
+              );
+            },
+            backgroundColor: Colors.transparent,
+            child: Container(
+              margin: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.edit_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
-            SlidableAction(
-              onPressed: (_) {
-                _showDeleteDialog(context);
-              },
-              backgroundColor: AppColors.error,
-              foregroundColor: Colors.white,
-              icon: Icons.delete,
-              label: 'Delete',
-              borderRadius: BorderRadius.circular(12),
+          ),
+          CustomSlidableAction(
+            onPressed: (_) => _showDeleteDialog(context),
+            backgroundColor: Colors.transparent,
+            child: Container(
+              margin: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppColors.error,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.delete_outline_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MedicineDetailScreen(medicine: medicine),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(16),
         child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
           decoration: BoxDecoration(
-            color: AppColors.cardBackground,
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.primary.withOpacity(0.05)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: AppColors.primary.withOpacity(0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                // Colored left border
-                Container(
-                  width: 6,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(medicine.colorCode),
-                        Color(medicine.colorCode).withOpacity(0.6),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      bottomLeft: Radius.circular(16),
-                    ),
-                  ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: medicineColor.withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        // Medicine Type Icon
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: Color(medicine.colorCode).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Center(
-                            child: Text(
-                              TimeHelper.getMedicineTypeIcon(medicine.type),
-                              style: const TextStyle(fontSize: 28),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        // Medicine Info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                medicine.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.medication,
-                                    size: 16,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    medicine.dose,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '• ${medicine.type}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (medicine.notes != null && medicine.notes!.isNotEmpty) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  medicine.notes!,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textHint,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                        // Time Display
-                        Column(
-                          children: [
-                            Icon(
-                              Icons.access_time,
-                              color: Color(medicine.colorCode),
-                              size: 20,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              TimeHelper.format12Hour(medicine.time),
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color(medicine.colorCode),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                child: Icon(
+                  _getMedicineIcon(medicine.type),
+                  color: medicineColor,
+                  size: 22,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      medicine.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${medicine.time.hour}:${medicine.time.minute.toString().padLeft(2, '0')} AM',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: AppColors.secondary,
+                  size: 18,
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
+    ).animate().fadeIn().slideX(begin: 0.1);
+  }
+
+  IconData _getMedicineIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'pill':
+      case 'tablet':
+      case 'capsule':
+        return Icons.medication_rounded;
+      case 'syrup':
+        return Icons.water_drop_rounded;
+      case 'injection':
+        return Icons.vaccines_rounded;
+      case 'cream':
+      case 'ointment':
+        return Icons.format_color_fill_rounded;
+      default:
+        return Icons.medication_rounded;
+    }
   }
 
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Delete Medicine'),
-          content: Text('Are you sure you want to delete ${medicine.name}?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          'Remove Medication?',
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+        ),
+        content: Text(
+          'Delete ${medicine.name} from your inventory?',
+          style: const TextStyle(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Keep it',
+              style: TextStyle(fontWeight: FontWeight.w700),
             ),
-            TextButton(
-              onPressed: () {
-                context.read<MedicineProvider>().deleteMedicine(medicine.id);
-                Navigator.pop(dialogContext);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${medicine.name} deleted'),
-                    backgroundColor: AppColors.success,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              },
-              child: const Text(
-                'Delete',
-                style: TextStyle(color: AppColors.error),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              context.read<MedicineProvider>().deleteMedicine(medicine.id);
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(80, 40),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-          ],
-        );
-      },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
     );
   }
 }
